@@ -31,7 +31,7 @@ dtype_dict = {
 }
 
 # tbd on data type here. 
-def find_match(fname_in, fname_out, criteria):
+def find_match(fname_in, fname_out, criteria, agg=True):
     # load xwalk
     df = pd.read_csv(fname_in, dtype=dtype_dict)
     
@@ -39,9 +39,24 @@ def find_match(fname_in, fname_out, criteria):
     idxs = df.groupby(["zip", "year", "quarter"])[criteria].idxmax()
     df_match = df.loc[idxs, ["zip", "fips", "year", "quarter", criteria]]
 
-    # writing matches to csv
-    df_match.to_csv(fname_out, index=False)
-    #return(df_match)
+    if agg:
+        df_agg = df_match.groupby(['zip', 'fips']).agg(
+                min_year=('year', 'min'),
+                max_year=('year', 'max'),
+                total_matches=('year', 'count'),
+                avg_match = (criteria, 'mean'),
+                min_match = (criteria, 'min'),
+                max_match = (criteria, 'max')
+            ).reset_index()
+        df_agg.rename({criteria + "_avg": "avg_match",
+                       criteria + "_min": "min_match",
+                       criteria + "_max": "min_match"}, inplace=True)
+        print(df_agg.head)
+        df_agg.to_csv(fname_out, index=False)
+    else:
+        # writing matches to csv
+        df_match.to_csv(fname_out, index=False)
+        #return(df_match)
 
 find_match(fname_in = infile,
            fname_out = outfile.format(min_year=str(min_year), 
