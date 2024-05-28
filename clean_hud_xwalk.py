@@ -16,7 +16,6 @@ max_year = args.max_year
 quarter = args.quarter
 wd = args.wd
 
-#wd = "/Users/jck019/desktop/nsaph/data_team/zip-fips-crosswalk"
 data_files = wd + "/data/intermediate"
 infile = wd + "/data/intermediate/zip2fips_raw_download_{quarter}{year}.csv"
 outfile = wd + "/data/intermediate/zip2fips_xwalk_clean.csv"

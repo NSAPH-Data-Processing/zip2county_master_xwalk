@@ -53,7 +53,6 @@ def find_match(fname_in, fname_out, criteria, agg=True):
     else:
         # writing matches to csv
         df_match.to_csv(fname_out, index=False)
-        #return(df_match)
 
 find_match(fname_in = infile,
            fname_out = outfile.format(min_year=str(min_year), 

@@ -4,9 +4,9 @@
 # ./run_xwalk_pipeline 
 
 WD="/Users/jck019/desktop/nsaph/data_team/zip-fips-crosswalk"
-quarter=1
+quarter=3
 min_year=2010
-max_year=2020
+max_year=2023
 criteria="tot_ratio"
 #year=2018
 #zipcode="02478,02138,39564,43081"
