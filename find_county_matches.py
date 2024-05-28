@@ -39,19 +39,16 @@ def find_match(fname_in, fname_out, criteria, agg=True):
     idxs = df.groupby(["zip", "year", "quarter"])[criteria].idxmax()
     df_match = df.loc[idxs, ["zip", "fips", "year", "quarter", criteria]]
 
+    # getting summary statistics for matches
     if agg:
         df_agg = df_match.groupby(['zip', 'fips']).agg(
-                min_year=('year', 'min'),
-                max_year=('year', 'max'),
-                total_matches=('year', 'count'),
-                avg_match = (criteria, 'mean'),
-                min_match = (criteria, 'min'),
-                max_match = (criteria, 'max')
+            **{'min_year':('year', 'min'),
+                'max_year':('year', 'max'),
+                'total_matches':('year', 'count'),
+                f'{criteria}_avg': (criteria, 'mean'),
+                f'{criteria}_min': (criteria, 'min'),
+                f'{criteria}_max': (criteria, 'max')}
             ).reset_index()
-        df_agg.rename({criteria + "_avg": "avg_match",
-                       criteria + "_min": "min_match",
-                       criteria + "_max": "min_match"}, inplace=True)
-        print(df_agg.head)
         df_agg.to_csv(fname_out, index=False)
     else:
         # writing matches to csv
