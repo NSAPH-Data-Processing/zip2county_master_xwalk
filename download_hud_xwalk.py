@@ -30,6 +30,37 @@ M2Q = {
         4: "12"
     }
 
+# helper function to deal with year/quarter adjustments
+def makeValidTime(year, quarter):
+    if quarter > 4 & quarter < 8:
+        return((year + 1, quarter % 4))
+    elif quarter == 0:
+        return((year - 1, 4))
+    else: 
+        raise ValueError("Incorrect quarter value " + str(quarter))
+
+def getXwalk(year, quarter):
+    m = M2Q[quarter]
+    url = URL_PATTERN.format(month=m, year=str(year))
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Raise an HTTPError for bad responses
+        
+        # Use a BytesIO object to read the Excel file from the response content
+        df = pd.read_excel(response.content)
+        
+        # Continue with your processing
+        return df
+        
+    except HTTPError as http_err:
+        print(f'HTTP error occurred: {http_err}')
+        if year != 2024:
+            getXwalk()
+    except Exception as err:
+        print(f'Other error occurred: {err}')
+    else:
+        print('File read successfully')
+
 
 def download_xwalk(quarter, year):
     # checking quarter/year parameters
