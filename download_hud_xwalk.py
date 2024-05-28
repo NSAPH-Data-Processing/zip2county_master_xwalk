@@ -5,18 +5,21 @@ import argparse
 
 # temporary argument situation
 parser = argparse.ArgumentParser(description='Downloads HUD zipcode-county crosswalk for given year and quarter')
-parser.add_argument('--year', type=int, help='Year for crosswalk')
+parser.add_argument('--min_year', type=int, default=None, help='Minimum year for xwalk range, inclusive')
+parser.add_argument('--max_year', type=int, default=None, help='Maximium year for xwalk range, inclusive')
 parser.add_argument('--quarter', type=int, help='Quarter for crosswalk')
 parser.add_argument('--wd', type=str, help='Working dir for pipeline')
 
 args = parser.parse_args()
-year = args.year
+min_year = args.min_year
+max_year = args.max_year
 quarter = args.quarter
 wd = args.wd
 
 TABLE = "public.hud_zip2fips"
 URL_PATTERN = "https://www.huduser.gov/portal/datasets/usps/ZIP_COUNTY_{month}{year}.xlsx"
 outfile = wd + "/data/intermediate/zip2fips_raw_download_{quarter}{year}.csv"
+year_range = range(min_year, max_year+1)
 
 M2Q = {
         1: "03",
@@ -46,5 +49,6 @@ def download_xwalk(quarter, year):
             df.to_csv(out_pth, index=False)
 
 
-
-download_xwalk(quarter=quarter, year=year)
+# downloading list of xwalks
+for year in year_range:
+    download_xwalk(quarter=quarter, year=year)

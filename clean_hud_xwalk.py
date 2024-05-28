@@ -5,32 +5,28 @@ import csv
 
 
 parser = argparse.ArgumentParser(description='Cleans HUD zipcode-county crosswalk for given year and quarter')
-parser.add_argument('--year', type=int, help='Year for crosswalk')
-parser.add_argument('--quarter', type=int, help='Quarter for crosswalk')
+parser.add_argument('--min_year', type=int, default=None, help='Minimum year for xwalk range, inclusive')
+parser.add_argument('--max_year', type=int, default=None, help='Maximium year for xwalk range, inclusive')
+parser.add_argument('--quarter', type=int, default=None, help='Quarter for crosswalk')
 parser.add_argument('--wd', type=str, help='Working dir for pipeline')
 
 args = parser.parse_args()
-year = args.year
+min_year = args.min_year
+max_year = args.max_year
 quarter = args.quarter
 wd = args.wd
 
 #wd = "/Users/jck019/desktop/nsaph/data_team/zip-fips-crosswalk"
 data_files = wd + "/data/intermediate"
 infile = wd + "/data/intermediate/zip2fips_raw_download_{quarter}{year}.csv"
-outfile = wd + "/data/intermediate/zip2fips_clean_{quarter}{year}.csv"
+outfile = wd + "/data/intermediate/zip2fips_xwalk_clean.csv"
+year_range = range(min_year, max_year+1)
+
+name_mapper= {"county": "fips"}
 
 
-# name_mapper= {"ZIP": "zip",
-#               "COUNTY": "fips",
-#               "RES_RATIO": "res_ratio",
-#               "BUS_RATIO": "bus_ratio",
-#               "OTH_RATIO": "oth_ratio",
-#               "TOT_RATIO": "tot_ratio"}
-
-name_mapper= {"county": "fips",}
-
-
-def clean_xwalk(quarter, year):
+# takes crosswalk and does column renaming, adds leading zeroes, changes to stringxs
+def clean_xwalk(year, quarter):
     # read in csv
     df = pd.read_csv(infile.format(quarter=str(quarter), year=str(year)))
 
@@ -39,16 +35,18 @@ def clean_xwalk(quarter, year):
     df.rename(columns=name_mapper, inplace=True)
     df["fips"] = df["fips"].astype(str).str.zfill(5)
     df["zip"] = df["zip"].astype(str).str.zfill(5)
+    df["year"] = year
+    df["quarter"] = quarter
 
-    # writing file
-    out_pth = Path(outfile.format(quarter=str(quarter), year=str(year)))
-    #if not out_pth.exists():
-    print("Saving: " + str(out_pth) + "...")
-    df.to_csv(out_pth, index=False)
+    return(df)
 
-clean_xwalk(quarter= quarter, year=year)
+# cleaning list of xwalks and store in list for concatenation 
+xwalk_lst = []
+for year in year_range:
+    print("Cleaning: year " + str(year) + " quarter " + str(quarter) + "...")
+    xwalk_lst.append(clean_xwalk(year=year, quarter= quarter))
 
 
-# later
-    # df["fips"] = df.fips.apply(lambda x: "{:05d}".format(x)).astype(str)
-    # df["zip"] = df.zip.apply(lambda x: "{:05d}".format(x)).astype("str")
+outdf = pd.concat(xwalk_lst)
+print("Saving: " + str(outfile) + "...")
+outdf.to_csv(outfile, index=False)
