@@ -4,7 +4,7 @@
 # ./run_xwalk_pipeline 
 
 WD="/Users/jck019/desktop/nsaph/data_team/zip-fips-crosswalk"
-quarter=3
+quarter=2
 min_year=2010
 max_year=2023
 criteria="tot_ratio"
