@@ -33,9 +33,9 @@ M2Q = {
 
 def download_xwalk(quarter, year):
     # checking quarter/year parameters
-    if quarter not in range(1,4):
+    if quarter not in range(1,5):
         raise ValueError("Quarter must be between 1 and 4: " + str(quarter))
-    elif year not in range(2010, 2021):
+    elif year not in range(2010, 2022):
         raise ValueError("Year must be between 2010 and 2021, inclusive")
     # if csv is already downloaded, don't download again
     else:
