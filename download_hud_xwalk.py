@@ -9,13 +9,15 @@ import requests
 parser = argparse.ArgumentParser(description='Downloads HUD zipcode-county crosswalk for given year and quarter')
 parser.add_argument('--min_year', type=int, default=None, help='Minimum year for xwalk range, inclusive')
 parser.add_argument('--max_year', type=int, default=None, help='Maximium year for xwalk range, inclusive')
-parser.add_argument('--quarter', type=int, help='Quarter for crosswalk')
 parser.add_argument('--wd', type=str, help='Working dir for pipeline')
+parser.add_argument('--min_quarter', type=int, default=1, help='Quarter start for crosswalk')
+parser.add_argument('--max_quarter', type=int, default=4, help='Quarter end for crosswalk')
 
 args = parser.parse_args()
 min_year = args.min_year
 max_year = args.max_year
-quarter = args.quarter
+min_quarter = args.min_quarter
+max_quarter = args.max_quarter
 wd = args.wd
 
 TABLE = "public.hud_zip2fips"
@@ -53,5 +55,11 @@ def download_xwalk(quarter, year):
 
 
 # downloading list of xwalks
-for year in year_range:
-    download_xwalk(quarter=quarter, year=year)
+for y in year_range:
+    for q in range(1, 5):
+        if y == max_year & q > max_quarter:
+            break
+        elif y == min_year & q < min_quarter:
+            pass
+        else:
+            download_xwalk(quarter=q, year=y)
