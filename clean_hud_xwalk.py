@@ -23,7 +23,8 @@ infile = wd + "/data/intermediate/zip2fips_raw_download_{quarter}{year}.csv"
 outfile = wd + "/data/intermediate/zip2fips_xwalk_clean.csv"
 year_range = range(min_year, max_year+1)
 
-name_mapper= {"county": "fips"}
+name_mapper= {"geoid": "fips",
+              "county": "fips"}
 
 
 dtype_dict = {
@@ -62,9 +63,9 @@ def clean_xwalk(year, quarter):
 xwalk_lst = []
 for y in year_range:
     for q in range(1, 5):
-        if y == max_year & q > max_quarter:
+        if y == max_year and q > max_quarter:
             break
-        elif y == min_year & q < min_quarter:
+        elif y == min_year and q < min_quarter:
             pass
         else:
             print("Cleaning: year " + str(y) + " quarter " + str(q) + "...")
