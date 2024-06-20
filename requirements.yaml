@@ -1,0 +1,12 @@
+name: zip_fips_master_xwalk
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pandas
+  - pip=24.0
+  - pip:
+    - requests
+    - snakemake==7.32.4
+    - pulp==2.7.0

@@ -4,8 +4,8 @@
 # ./run_xwalk_pipeline <quarter> <min_year> <max_year> <criteria>
 
 # Check if the correct number of arguments are provided
-if [ "$#" -ne 4 ] && [ "$#" -ne 6 ]; then
-    echo "Usage: $0 <min_year> <max_year> <criteria> <api_token> <min_quarter> <max_quarter>"
+if [ "$#" -ne 5 ] && [ "$#" -ne 6 ]; then
+    echo "Usage: $0 <min_year> <max_year> <criteria> <api_token> <xwalk_method>"
     exit 1
 fi
 
@@ -14,8 +14,10 @@ min_year=$1
 max_year=$2
 criteria=$3
 api_token=$4
-min_quarter=${5:-1}
-max_quarter=${6:-4}
+xwalk_method=$5
+
+# min_quarter=${5:-1}
+# max_quarter=${6:-4}
 
 # # Validate quarter
 # if ! [[ "$min_quarter" =~ ^[1-4]$ ]] || ! [[ "$max_quarter" =~ ^[1-4]$ ]]; then
@@ -49,18 +51,16 @@ fi
 echo "Minimum Year: $min_year"
 echo "Maximum Year: $max_year"
 echo "Criteria: $criteria"
-echo "Minimum Quarter: $min_quarter"
-echo "Maximum Quarter: $max_quarter"
 
 working_dir="$(dirname "$(readlink -f "$0")")"
 echo $working_dir
 
 python3 $working_dir/download_hud_xwalk.py --min_year $min_year \
-    --max_year $max_year --wd $working_dir --token $api_token \
-    --min_quarter $min_quarter --max_quarter $max_quarter
+    --max_year $max_year --wd $working_dir --token $api_token #\
+    #--min_quarter $min_quarter --max_quarter $max_quarter
 python3 $working_dir/clean_hud_xwalk.py --min_year $min_year \
-    --max_year $max_year --wd $working_dir \
-    --min_quarter $min_quarter --max_quarter $max_quarter
+    --max_year $max_year --wd $working_dir #\
+    #--min_quarter $min_quarter --max_quarter $max_quarter
 python3 $working_dir/find_county_matches.py --min_year $min_year \
     --max_year $max_year --wd $working_dir \
-    --criteria $criteria
+    --criteria $criteria --xwalk_method $xwalk_method
