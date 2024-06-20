@@ -15,7 +15,7 @@ print(year_list)
 
 rule all:
     input:
-        "data/intermediate/zip2fips_xwalk_clean.csv"
+        f"data/output/zip2fips_master_xwalk_{min_year}_{max_year}_{criteria}_{xwalk_method}.csv"
 
 rule download_hud_xwalks:
     output:
