@@ -42,6 +42,7 @@ def make_one2one_summy(df, criteria):
     ).reset_index()
 
     df_agg = df_agg.sort_values(["zip", "min_year"])
+    df_agg = df_agg.drop(columns=["group"])
 
     return(df_agg)
 
@@ -72,7 +73,9 @@ def make_one2few_summy(df, criteria, cutoff = 0.05):
                     f'{criteria}_min': (criteria, 'min'),
                     f'{criteria}_max': (criteria, 'max')}
                 ).reset_index()
-    df_agg = df_agg.drop(columns="group")
+    
+    df_agg = df_agg.sort_values(["zip", "min_year"])
+    df_agg = df_agg.drop(columns=["group"])
     return(df_agg)
 
 
@@ -96,7 +99,7 @@ def main(args):
         raise ValueError("Unrecognized xwalk criteria. Valid criteria are " + ", ".join(CRITERIA_LST))
     if xwalk_method == "one2one":
         df_out = make_one2one(df=df, criteria=criteria)
-    if xwalk_method == "one2one_summy":
+    elif xwalk_method == "one2one_summy":
         df_out = make_one2one_summy(df=df, criteria=criteria)
     elif xwalk_method == "one2few":
         df_out = make_one2few(df=df, criteria=criteria, cutoff=cutoff)
