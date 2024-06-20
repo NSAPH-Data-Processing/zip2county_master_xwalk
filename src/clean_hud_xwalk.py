@@ -1,27 +1,9 @@
 import pandas as pd
-from pathlib import Path
 import argparse
 
-parser = argparse.ArgumentParser(description='Cleans HUD zipcode-county crosswalk for given year and quarter')
-parser.add_argument('--min_year', type=int, default=None, help='Minimum year for xwalk range, inclusive')
-parser.add_argument('--max_year', type=int, default=None, help='Maximium year for xwalk range, inclusive')
-parser.add_argument('--quarter', type=int, default=4, help='Quarter to be used for data downloading')
-
-args = parser.parse_args()
-min_year = args.min_year
-max_year = args.max_year
-quarter = args.quarter
-
-data_files = "data/intermediate"
-infile = "data/input/zip2fips_raw_download_{quarter}{year}.csv"
-outfile = "data/intermediate/zip2fips_xwalk_clean.csv"
-year_range = range(min_year, max_year+1)
-
-name_mapper= {"geoid": "fips",
+NAME_MAPPER = {"geoid": "fips",
               "county": "fips"}
-
-
-dtype_dict = {
+DTYPE_DICT = {
     "zip" : int,
     "fips": int,
     "res_ratio": float,
@@ -31,15 +13,15 @@ dtype_dict = {
 }
 
 # takes crosswalk and does column renaming, adds leading zeroes, changes to stringxs
-def clean_xwalk(year, quarter):
+def clean_xwalk(year, quarter, infile):
     # read in csv
     df = pd.read_csv(infile.format(quarter=str(quarter), year=str(year)))
 
     # column re-naming and setting new types
     df.rename(columns=str.lower, inplace=True)
-    df.rename(columns=name_mapper, inplace=True)
+    df.rename(columns=NAME_MAPPER, inplace=True)
     df = df.dropna(subset=["zip", "fips"])
-    df = df.astype(dtype_dict)
+    df = df.astype(DTYPE_DICT)
 
     # adding leading zeroes
     df["fips"] = df["fips"].astype(str).str.zfill(5)
@@ -51,13 +33,32 @@ def clean_xwalk(year, quarter):
               "bus_ratio", "oth_ratio", 
               "tot_ratio", "year", "quarter"]])
 
-# cleaning list of xwalks and store in list for concatenation 
-xwalk_lst = []
-for y in year_range:
-    print("Cleaning: year " + str(y) + " quarter " + str(quarter) + "...")
-    xwalk_lst.append(clean_xwalk(year=y, quarter=quarter))
+def main(args):
+    # cleaning list of xwalks and store in list for concatenation 
+    min_year = args.min_year
+    max_year = args.max_year
+    quarter = args.quarter
+
+    infile = "data/input/zip2fips_raw_download_{year}Q{quarter}.csv"
+    outfile = "data/intermediate/zip2fips_xwalk_clean.csv"
 
 
-outdf = pd.concat(xwalk_lst)
-print("Saving: " + str(outfile) + "...")
-outdf.to_csv(outfile, index=False)
+    year_range = range(min_year, max_year+1)
+    xwalk_lst = []
+    for y in year_range:
+        print("Cleaning: year " + str(y) + " quarter " + str(quarter) + "...")
+        xwalk_lst.append(clean_xwalk(year=y, quarter=quarter, infile=infile))
+
+    # concatenating list of dfs
+    outdf = pd.concat(xwalk_lst)
+    print("Saving: " + str(outfile) + "...")
+    outdf.to_csv(outfile, index=False)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Cleans HUD zipcode-county crosswalk for given year and quarter')
+    parser.add_argument('--min_year', type=int, default=2010, help='Minimum year for xwalk range, inclusive')
+    parser.add_argument('--max_year', type=int, default=2012, help='Maximium year for xwalk range, inclusive')
+    parser.add_argument('--quarter', type=int, default=4, help='Quarter to be used for data downloading')
+    args = parser.parse_args()
+    main(args)

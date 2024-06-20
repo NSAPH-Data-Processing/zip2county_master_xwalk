@@ -1,27 +1,10 @@
+import os
 import pandas as pd
-#import os.path
 from pathlib import Path
 import argparse
-from urllib.error import HTTPError
 import requests
 
-# temporary argument situation
-parser = argparse.ArgumentParser(description='Downloads HUD zipcode-county crosswalk for given year and quarter')
-parser.add_argument("api_token", type=str, help="Token for HUD API (required)")
-parser.add_argument('--min_year', type=int, default=2010, help='Minimum year for xwalk range, inclusive')
-parser.add_argument('--max_year', type=int, default=2023, help='Maximium year for xwalk range, inclusive')
-parser.add_argument('--quarter', type=int, default=4, help='Quarter to be used for data downloading')
-
-args = parser.parse_args()
-min_year = args.min_year
-max_year = args.max_year
-api_token = args.api_token
-quarter = args.quarter
-
 URL_PATTERN = "https://www.huduser.gov/portal/datasets/usps/ZIP_COUNTY_{month}{year}.xlsx"
-outfile = "data/input/zip2fips_raw_download_{quarter}{year}.csv"
-year_range = range(min_year, max_year+1)
-
 M2Q = {
         1: "03",
         2: "06",
@@ -29,8 +12,8 @@ M2Q = {
         4: "12"
     }
 
-
-def download_xwalk(quarter, year):
+# takes year, quarter, and api token and downloads crosswalk from HUD API
+def download_xwalk(year, quarter, api_token, outfile):
     if quarter not in range(1,5):
         raise ValueError("Quarter must be between 1 and 4: " + str(quarter))
     elif year not in range(2010, 2025):
@@ -48,11 +31,27 @@ def download_xwalk(quarter, year):
             print ("Failure, see status code: {0}".format(response.status_code))
         else: 
             df = pd.DataFrame(response.json()["data"]["results"])	
-            #df: pd.DataFrame = pd.read_excel(url)
             print("Saving: " + str(out_pth) + " ...")
             df.to_csv(out_pth, index=False)
 
+def main(args):
+    outfile="data/input/zip2fips_raw_download_{year}Q{quarter}.csv"
 
-# downloading list of xwalks
-for y in year_range:
-    download_xwalk(quarter=quarter, year=y)
+    # iterate through year range, download xwalk file for each
+    year_range = range(args.min_year, args.max_year+1)
+    for y in year_range:
+        download_xwalk(year=y, 
+                       quarter=args.quarter, 
+                       api_token=args.api_token, 
+                       outfile=outfile)
+
+
+if __name__ == "__main__":
+    api_token = os.getenv("HUD_API_TOKEN")
+    parser = argparse.ArgumentParser(description='Downloads HUD zipcode-county crosswalk for given year and quarter')
+    parser.add_argument('--api_token', type=str, default=api_token, help='API token for HUD API')
+    parser.add_argument('--min_year', type=int, default=2010, help='Minimum year for xwalk range, inclusive')
+    parser.add_argument('--max_year', type=int, default=2012, help='Maximium year for xwalk range, inclusive')
+    parser.add_argument('--quarter', type=int, default=4, help='Quarter to be used for data downloading')
+    args = parser.parse_args()
+    main(args)
