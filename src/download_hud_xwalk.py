@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from pathlib import Path
 import argparse
@@ -34,27 +35,23 @@ def download_xwalk(year, quarter, api_token, outfile):
             df.to_csv(out_pth, index=False)
 
 def main(args):
-    # processing arguments 
-    min_year = args.min_year
-    max_year = args.max_year
-    api_token = args.api_token
-    quarter = args.quarter
-    outfile="data/input/zip2fips_raw_download_{quarter}{year}.csv"
+    outfile="data/input/zip2fips_raw_download_{year}Q{quarter}.csv"
 
     # iterate through year range, download xwalk file for each
-    year_range = range(min_year, max_year+1)
+    year_range = range(args.min_year, args.max_year+1)
     for y in year_range:
         download_xwalk(year=y, 
-                       quarter=quarter, 
-                       api_token=api_token, 
+                       quarter=args.quarter, 
+                       api_token=args.api_token, 
                        outfile=outfile)
 
 
 if __name__ == "__main__":
+    api_token = os.getenv("HUD_API_TOKEN")
     parser = argparse.ArgumentParser(description='Downloads HUD zipcode-county crosswalk for given year and quarter')
-    parser.add_argument("api_token", type=str, help="Token for HUD API (required)")
+    parser.add_argument('--api_token', type=str, default=api_token, help='API token for HUD API')
     parser.add_argument('--min_year', type=int, default=2010, help='Minimum year for xwalk range, inclusive')
-    parser.add_argument('--max_year', type=int, default=2023, help='Maximium year for xwalk range, inclusive')
+    parser.add_argument('--max_year', type=int, default=2012, help='Maximium year for xwalk range, inclusive')
     parser.add_argument('--quarter', type=int, default=4, help='Quarter to be used for data downloading')
     args = parser.parse_args()
     main(args)
