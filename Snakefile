@@ -16,7 +16,7 @@ rule all:
 
 rule download_uds_xwalks:
     output:
-        expand("data/input/zip2fips_raw_download_{quarter}{year}.csv", year=range(min_year, max_year+1), quarter=quarter)
+        expand("data/input/zip2fips_raw_download_{year}Q{quarter}.csv", year=range(min_year, max_year+1), quarter=quarter)
     shell:
         """
         python src/download_hud_xwalk.py $HUD_API_TOKEN --min_year {min_year} --max_year {max_year}
@@ -24,7 +24,7 @@ rule download_uds_xwalks:
 
 rule create_clean_uds:
     input:
-        expand("data/input/zip2fips_raw_download_{quarter}{year}.csv", year=range(min_year, max_year+1), quarter=quarter)
+        expand("data/input/zip2fips_raw_download_{year}Q{quarter}.csv", year=range(min_year, max_year+1), quarter=quarter)
     output:
         "data/intermediate/zip2fips_xwalk_clean.csv"
     shell:

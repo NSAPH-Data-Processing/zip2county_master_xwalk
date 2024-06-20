@@ -39,7 +39,7 @@ def main(args):
     max_year = args.max_year
     quarter = args.quarter
 
-    infile = "data/input/zip2fips_raw_download_{quarter}{year}.csv"
+    infile = "data/input/zip2fips_raw_download_{year}Q{quarter}.csv"
     outfile = "data/intermediate/zip2fips_xwalk_clean.csv"
 
 
@@ -58,7 +58,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Cleans HUD zipcode-county crosswalk for given year and quarter')
     parser.add_argument('--min_year', type=int, default=2010, help='Minimum year for xwalk range, inclusive')
-    parser.add_argument('--max_year', type=int, default=2023, help='Maximium year for xwalk range, inclusive')
+    parser.add_argument('--max_year', type=int, default=2012, help='Maximium year for xwalk range, inclusive')
     parser.add_argument('--quarter', type=int, default=4, help='Quarter to be used for data downloading')
     args = parser.parse_args()
     main(args)

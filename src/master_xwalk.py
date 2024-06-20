@@ -118,7 +118,7 @@ if __name__ == "__main__":
                         default=2010,
                         type=int, help='Minimum year for xwalk range, inclusive')
     parser.add_argument('--max_year', 
-                        default=2023,
+                        default=2012,
                         type=int, 
                         help='Maximium year for xwalk range, inclusive')
     parser.add_argument('--criteria', 
