@@ -1,4 +1,3 @@
-import os
 configfile: "config.yaml"
 envvars:  # this indicates environment vars that must be set, always done in docker
     "HUD_API_TOKEN"
