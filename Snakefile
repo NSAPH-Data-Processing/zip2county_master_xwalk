@@ -8,8 +8,6 @@ criteria = config["criteria"]
 xwalk_method = config["xwalk_method"]
 quarter = config["quarter"]
 
-#API_TOKEN = os.getenv("HUD_API_TOKEN")
-
 rule all:
     input:
         f"data/output/zip2fips_master_xwalk_{min_year}_{max_year}_{criteria}_{xwalk_method}.csv"
