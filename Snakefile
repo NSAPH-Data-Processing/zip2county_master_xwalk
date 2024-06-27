@@ -19,24 +19,26 @@ rule all:
 
 rule download_hud_xwalks:
     output:
-        f"data/input/zip2fips_raw_download_{{year}}Q{quarter}.csv" # year is a wildcard
+        f"data/input/zip2fips_raw_download_{{year}}Q{{quarter}}.csv" # year and quarter are wildcards
     shell:
         f"""
-        python src/download_hud_xwalk.py --api_token {api_token} --year {{wildcards.year}} 
-        """ # year is a wildcard
+        python src/download_hud_xwalk.py --api_token {api_token} --year {{wildcards.year}} --quarter {{wildcards.quarter}}
+        """ # year and quarter are wildcards
 
 rule create_clean_uds:
     input:
-        expand(f"data/input/zip2fips_raw_download_{{year}}Q{quarter}.csv", 
-        year=year_list) # year is a wildcard
+        expand("data/input/zip2fips_raw_download_{{year}}Q{{quarter}}.csv", 
+        year=year_list, # year is a wildcard
+        quarter=list(range(1,4+1)) # quarter is a wildcard
+        )
     output:
-        "data/intermediate/zip2fips_xwalk_clean.csv"
+        f"data/intermediate/zip2fips_xwalk_clean_{min_year}_{max_year}.csv"
     shell:
         f"python src/clean_hud_xwalk.py --min_year {min_year} --max_year {max_year}"
 
 rule master_xwalk:
     input:
-        "data/intermediate/zip2fips_xwalk_clean.csv"
+        f"data/intermediate/zip2fips_xwalk_clean_{min_year}_{max_year}.csv"
     output:
         f"data/output/zip2fips_master_xwalk_{min_year}_{max_year}_{criteria}_{xwalk_method}.csv"
     shell:
