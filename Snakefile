@@ -30,7 +30,7 @@ rule download_hud_xwalks:
 
 rule create_clean_uds:
     input:
-        expand("data/input/zip2fips_raw_download_{year}Q{quarter}.csv", 
+        expand(f"data/input/zip2fips_raw_download_{{year}}Q{{quarter}}.csv", 
         year=year_list, # year is a wildcard
         quarter=list(range(1,4+1)) # quarter is a wildcard
         )
