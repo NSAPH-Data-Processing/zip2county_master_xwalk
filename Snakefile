@@ -8,21 +8,21 @@ criteria = config["criteria"]
 xwalk_method = config["xwalk_method"]
 quarter = config["quarter"]
 
-API_TOKEN = os.getenv("HUD_API_TOKEN")
+#API_TOKEN = os.getenv("HUD_API_TOKEN")
 
 rule all:
     input:
         f"data/output/zip2fips_master_xwalk_{min_year}_{max_year}_{criteria}_{xwalk_method}.csv"
 
-rule download_uds_xwalks:
+rule download_hud_xwalks:
     output:
         expand("data/input/zip2fips_raw_download_{year}Q{quarter}.csv", year=range(min_year, max_year+1), quarter=quarter)
     shell:
         """
-        python src/download_hud_xwalk.py $HUD_API_TOKEN --min_year {min_year} --max_year {max_year}
+        python src/download_hud_xwalk.py --min_year {min_year} --max_year {max_year}
         """
 
-rule create_clean_uds:
+rule create_clean_hud_xwalks:
     input:
         expand("data/input/zip2fips_raw_download_{year}Q{quarter}.csv", year=range(min_year, max_year+1), quarter=quarter)
     output:
