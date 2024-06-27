@@ -39,7 +39,7 @@ def main(args):
     max_year = args.max_year
 
     infile = "data/input/zip2fips_raw_download_{year}Q{quarter}.csv"
-    outfile = "data/intermediate/zip2fips_xwalk_clean.csv"
+    outfile = f"data/intermediate/zip2fips_xwalk_clean_{min_year}_{max_year}.csv"
 
     year_range = range(min_year, max_year+1)
     xwalk_lst = []
