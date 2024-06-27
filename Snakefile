@@ -1,17 +1,20 @@
 import os
 configfile: "config.yaml"
-
+envvars:  # this indicates environment vars that must be set, always done in docker
+    "HUD_API_TOKEN"
+    
 # Read default values from the config file
 min_year = config["min_year"]
 max_year = config["max_year"]
 criteria = config["criteria"]
 xwalk_method = config["xwalk_method"]
-quarter = config["quarter"]
-
-api_token = os.getenv("HUD_API_TOKEN")
 
 year_list = list(range(min_year, max_year+1))
+print("year list: ")
 print(year_list)
+
+api_token = os.getenv("HUD_API_TOKEN")
+print("api token" + api_token)
 
 rule all:
     input:
@@ -27,7 +30,7 @@ rule download_hud_xwalks:
 
 rule create_clean_uds:
     input:
-        expand("data/input/zip2fips_raw_download_{{year}}Q{{quarter}}.csv", 
+        expand("data/input/zip2fips_raw_download_{year}Q{quarter}.csv", 
         year=year_list, # year is a wildcard
         quarter=list(range(1,4+1)) # quarter is a wildcard
         )
