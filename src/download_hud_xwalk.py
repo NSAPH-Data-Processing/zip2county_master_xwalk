@@ -36,18 +36,18 @@ def download_xwalk(year, quarter, api_token, outfile):
 
 def main(args):
     outfile="data/input/zip2fips_raw_download_{year}Q{quarter}.csv"
+    api_token = os.getenv("HUD_API_TOKEN")
 
     # iterate through year range, download xwalk file for each
     year_range = range(args.min_year, args.max_year+1)
     for y in year_range:
         download_xwalk(year=y, 
                        quarter=args.quarter, 
-                       api_token=args.api_token, 
+                       api_token=api_token, 
                        outfile=outfile)
 
 
 if __name__ == "__main__":
-    api_token = os.getenv("HUD_API_TOKEN")
     parser = argparse.ArgumentParser(description='Downloads HUD zipcode-county crosswalk for given year and quarter')
     #parser.add_argument('--api_token', type=str, default=api_token, help='API token for HUD API')
     parser.add_argument('--min_year', type=int, default=2010, help='Minimum year for xwalk range, inclusive')
