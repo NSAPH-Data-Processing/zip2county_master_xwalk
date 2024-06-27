@@ -27,6 +27,30 @@ To modify any of the default parameters, modify the `config.yaml` file or pass t
 snakemake --cores 1 -C min_year={min_year} max_year={max_year} quarter={quarter} criteria={criteria} xwalk_method={xwalk_method}
 ```
 
+### Dockerized Pipeline
+
+Create the folder where you would like to store the output dataset.
+
+```bash 
+mkdir <path>/zip2fips_master_xwalk/
+```
+
+Create your own docker image
+```
+docker build -t <image_name> .
+```
+
+Then run the docker container
+```bash
+docker run -v <path>/zip2fips_master_xwalk/:/app/data/output <image_name>
+```
+
+If you are interested in storing the input raw and intermediate data run
+
+```bash
+docker run -v <path>/zip2fips_master_xwalk/:/app/data/ <image_name>
+```
+
 ## Data information
 
 Crosswalks are important data files that help researchers translate between different geographies. For example, a researcher might have hospitalization data at the ZIP-code level but other variables at the U.S. county (FIPS) level. If the analysis is going to be conducted at the FIPS level, it would be important to convert ZIP-level hospitalizations into FIPS-level hospitalizations.
