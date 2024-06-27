@@ -27,6 +27,8 @@ To modify any of the default parameters, modify the `config.yaml` file or pass t
 snakemake --cores 1 -C min_year={min_year} max_year={max_year} quarter={quarter} criteria={criteria} xwalk_method={xwalk_method}
 ```
 
+Output crosswalks for default parameters and several different `xwalk_method` parameters can be found on the Harvard Dataverse ([link] https://dataverse.harvard.edu/dataverse/zip2fips_crosswalk/)
+
 ## Data information
 
 Crosswalks are important data files that help researchers translate between different geographies. For example, a researcher might have hospitalization data at the ZIP-code level but other variables at the U.S. county (FIPS) level. If the analysis is going to be conducted at the FIPS level, it would be important to convert ZIP-level hospitalizations into FIPS-level hospitalizations.
