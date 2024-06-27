@@ -1,6 +1,5 @@
 ---
 title: "zip2fips checks"
-output: pdf_document
 date: "2024-06-13"
 ---
 
@@ -17,9 +16,9 @@ library(data.table)
 library(dplyr)
 library(ggplot2)
 
-setwd("~/desktop/nsaph/data_team/zip-fips-crosswalk")
+
 # load full data frame
-xwalk_full <- data.table::fread("./data/intermediate/zip2fips_xwalk_clean_allquarters.csv", 
+xwalk_full <- data.table::fread("../data/intermediate/zip2fips_xwalk_clean_2010_2023.csv", 
                                 colClasses = c(zip="character",
                                                fips="character"))
 
