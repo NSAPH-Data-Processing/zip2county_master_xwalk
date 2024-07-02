@@ -7,11 +7,11 @@ RUN apt-get update && apt-get install -y build-essential
 WORKDIR /app
 
 # Clone your repository
-RUN git clone --branch jckitch/issue13 https://github.com/NSAPH-Data-Processing/zip_fips_master_xwalk/ .
+RUN git clone https://github.com/NSAPH-Data-Processing/zip_fips_master_xwalk/ .
 
 # Update the base environment
 RUN mamba env update -n base -f requirements.yaml 
 
-# snakemake --configfile conf/config.yaml --cores 4
-ENTRYPOINT ["snakemake", "--configfile", "config.yaml", "--cores", "4"]
+# snakemake --configfile config.yaml --cores 1
+ENTRYPOINT ["snakemake", "--configfile", "config.yaml", "--cores", "1"]
 CMD ["-C", "min_year=2010", "max_year=2023", "quarter=4", "criteria=tot_ratio", "xwalk_method=one2one"]
