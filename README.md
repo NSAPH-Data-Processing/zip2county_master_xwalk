@@ -11,7 +11,7 @@ conda activate zip_fips_master_xwalk
 
 It is also possible to use `mamba` using the same commands.
 
-In order to use the pipeline, you must also have an API token for the HUD database. Instructions on how to quickly and freely obtain an API token can be found at this [link](https://www.huduser.gov/portal/dataset/uspszip-api.html). Then export the API as a global variable.
+You need to have an API token for the HUD database in order to use the pipeline. Instructions on how to quickly and freely obtain an API token can be found at this [link](https://www.huduser.gov/portal/dataset/uspszip-api.html). Make sure to export the API as a global variable.
 
 ```
 export HUD_API_TOKEN="your-token-here"
@@ -24,14 +24,43 @@ snakemake --cores 1
 
 To modify any of the default parameters, modify the `config.yaml` file or pass the `-C` flag to snakemake followed by your desired parameters.
 ```
-snakemake --cores 1 -C min_year={min_year} max_year={max_year} quarter={quarter} criteria={criteria} xwalk_method={xwalk_method}
+snakemake --cores 1 -C min_year={min_year} max_year={max_year} criteria={criteria} xwalk_method={xwalk_method}
+```
+
+### Dockerized Pipeline
+
+Create the folder where you would like to store the output dataset.
+
+```bash 
+mkdir <path>/zip2fips_master_xwalk/
+```
+
+Create your own docker image
+```bash
+docker build -t <image_name> .
+```
+
+Then run the docker container
+```bash
+docker run -v <path>/zip2fips_master_xwalk/:/app/data/output <image_name>
+```
+
+If you are also interested in storing the raw and intermediate data run
+
+```bash
+docker run -v <path>/zip2fips_master_xwalk/:/app/data/ <image_name>
+```
+
+And modifications to default arguments can also be made as follows:
+```bash
+docker run -v <path>/zip2fips_master_xwalk/:/app/data/ <image_name> -C min_year={min_year} max_year={max_year}
 ```
 
 ## Data information
 
 Crosswalks are important data files that help researchers translate between different geographies. For example, a researcher might have hospitalization data at the ZIP-code level but other variables at the U.S. county (FIPS) level. If the analysis is going to be conducted at the FIPS level, it would be important to convert ZIP-level hospitalizations into FIPS-level hospitalizations.
 
-ZIP and FIPS boundaries, like many government-established geographic structures, are dynamic and change from year to year. Some ZIP or FIPS codes exist in 2010 but are retired once new post office or census data arrives in 2020. The U.S. Department of Housing and Urban Development (HUD) bases their crosswalks on address data from the U.S. Postal Service (USPS), and this data also changes! 
+ZIP and FIPS boundaries, like many government-established geographic structures, are dynamic and change from year to year. Some FIPS codes exist in 2010 but are retired once new census data arrives in 2020. ZIP codes are maintained by and for the U.S. Postal Service and can change on a yearly or quarterly basis. This pipeline uses crosswalks from the U.S. Department of Housing and Urban Development (HUD) that are maintained at the quarterly level. Only Q4 crosswalks are used to build the master crosswalk from this pipeline, but intermediate quarters are also downloaded. The differences between quarterly crosswalks within a year (i.e. Q3 2020 and Q4 2020) are generally quite small, and `notes/notes.Rmd` conducts a brief overview of these differences.
 
 ### Parameter adjustment
 
@@ -68,4 +97,4 @@ In this case, the column `top_match` indicates if the `fips` in that row is the 
 |84712|49017|2021    |2023    |0.9036797    |0.8928571    |0.9090909    |
 
 
-The `min_year`, `max_year`, and `quarter` parameters control the minimum year for crosswalk analysis (data not available before 2010), maximum year for crosswalk analysis (maximum is 2023 at time of writing), and quarter for crosswalk analysis (default = 4).
+The `min_year` and `max_year`, and parameters control the minimum year for crosswalk analysis (data not available before 2010), maximum year for crosswalk analysis (maximum is 2023 at time of writing). 

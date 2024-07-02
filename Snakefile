@@ -27,7 +27,7 @@ rule download_hud_xwalks:
         python src/download_hud_xwalk.py --api_token {api_token} --year {{wildcards.year}} --quarter {{wildcards.quarter}}
         """ # year and quarter are wildcards
 
-rule create_clean_uds:
+rule create_clean_hud_xwalks:
     input:
         expand(f"data/input/zip2fips_raw_download_{{year}}Q{{quarter}}.csv", 
         year=year_list, # year is a wildcard
