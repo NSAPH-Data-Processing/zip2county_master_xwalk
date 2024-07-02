@@ -86,13 +86,15 @@ def main(args):
     criteria = args.criteria
     xwalk_method = args.xwalk_method
     cutoff = args.cutoff
+    quarter = args.quarter
 
     # input/output file setup
-    infile = "data/intermediate/zip2fips_xwalk_clean.csv"
+    infile = f"data/intermediate/zip2fips_xwalk_clean_{min_year}_{max_year}.csv"
     outfile = f"data/output/zip2fips_master_xwalk_{min_year}_{max_year}_{criteria}_{xwalk_method}.csv"
 
     # read df
     df = pd.read_csv(infile, dtype=DTYPE_DICT)
+    df = df[df["quarter"] == quarter]
 
     # execute xwalk creation based on chosen method along with given criteria
     if criteria not in CRITERIA_LST:
@@ -121,6 +123,10 @@ if __name__ == "__main__":
                         default=2012,
                         type=int, 
                         help='Maximium year for xwalk range, inclusive')
+    parser.add_argument('--quarter',
+                        default=4,
+                        type=int,
+                        help='Quarter to be used for master xwalk')
     parser.add_argument('--criteria', 
                         choices = ["tot_ratio", "res_ratio", "bus_ratio", "oth_ratio"],
                         default="tot_ratio", 
