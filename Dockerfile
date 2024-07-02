@@ -14,4 +14,4 @@ RUN mamba env update -n base -f requirements.yaml
 
 # snakemake --configfile config.yaml --cores 1
 ENTRYPOINT ["snakemake", "--configfile", "config.yaml", "--cores", "1"]
-CMD ["-C", "min_year=2010", "max_year=2023", "quarter=4", "criteria=tot_ratio", "xwalk_method=one2one"]
+CMD ["-C", "min_year=2010", "max_year=2023", "criteria=tot_ratio", "xwalk_method=one2one"]
