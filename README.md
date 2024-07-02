@@ -1,3 +1,5 @@
+[![](<https://img.shields.io/badge/Dataverse-10.7910/DVN/SYNPBS-orange>)](https://doi.org/10.7910/DVN/0U2TCB)
+
 # ZIP --> FIPS master crosswalk
 
 This pipeline pulls crosswalks from the U.S. Department of Housing and Urban Development (HUD) database, compiling a comprehensive ZIP --> FIPS crosswalk from 2010 to 2023.
@@ -27,7 +29,18 @@ To modify any of the default parameters, modify the `config.yaml` file or pass t
 snakemake --cores 1 -C min_year={min_year} max_year={max_year} quarter={quarter} criteria={criteria} xwalk_method={xwalk_method}
 ```
 
-Output crosswalks for default parameters and several different `xwalk_method` parameters can be found on the Harvard Dataverse ([link] https://dataverse.harvard.edu/dataverse/zip2fips_crosswalk/)
+Output crosswalks for default parameters and several different `xwalk_method` parameters can be found on the Harvard Dataverse [https://doi.org/10.7910/DVN/0U2TCB](https://doi.org/10.7910/DVN/0U2TCB). To cite with Bibtex use:
+```
+@data{DVN/0U2TCB_2024,
+author = {Kitch, James},
+publisher = {Harvard Dataverse},
+title = {{ZIP to FIPS Crosswalk}},
+year = {2024},
+version = {DRAFT VERSION},
+doi = {10.7910/DVN/0U2TCB},
+url = {https://doi.org/10.7910/DVN/0U2TCB}
+}
+```
 
 ## Data information
 
