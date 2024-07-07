@@ -111,7 +111,7 @@ def main(args):
         raise ValueError("Unrecognized crosswalk-matching method. Valid methods are 'one2one', 'one2few', and 'one2few_summy'.")
     
     print("Saving: " + str(outfile) + "...")
-    df_out.to_csv(outfile)
+    df_out.to_csv(outfile, index=False)
 
 
 if __name__ == "__main__":
