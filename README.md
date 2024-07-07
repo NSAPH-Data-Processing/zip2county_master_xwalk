@@ -44,18 +44,18 @@ docker build -t <image_name> .
 
 Then run the docker container
 ```bash
-docker run -v <path>/zip2fips_master_xwalk/:/app/data/output <image_name>
+docker run -v <path>/zip2fips_master_xwalk/:/app/data/output --env HUD_API_TOKEN=$HUD_API_TOKEN <image_name>
 ```
 
 If you are also interested in storing the raw and intermediate data run
 
 ```bash
-docker run -v <path>/zip2fips_master_xwalk/:/app/data/ <image_name>
+docker run -v <path>/zip2fips_master_xwalk/:/app/data/ --env HUD_API_TOKEN=$HUD_API_TOKEN <image_name>
 ```
 
 And modifications to default arguments can also be made as follows:
 ```bash
-docker run -v <path>/zip2fips_master_xwalk/:/app/data/ <image_name> -C min_year={min_year} max_year={max_year}
+docker run -v <path>/zip2fips_master_xwalk/:/app/data/ --env HUD_API_TOKEN=$HUD_API_TOKEN <image_name> -C min_year={min_year} max_year={max_year}
 ```
 
 Output crosswalks for default parameters and several different `xwalk_method` parameters can be found on the Harvard Dataverse [https://doi.org/10.7910/DVN/0U2TCB](https://doi.org/10.7910/DVN/0U2TCB). To cite with Bibtex use:
