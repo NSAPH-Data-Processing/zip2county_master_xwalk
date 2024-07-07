@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y build-essential
 WORKDIR /app
 
 # Clone your repository
-RUN git clone https://github.com/NSAPH-Data-Processing/zip_fips_master_xwalk/ .
+RUN git clone https://github.com/NSAPH-Data-Processing/zip2fips_master_xwalk/ .
 
 # Update the base environment
 RUN mamba env update -n base -f requirements.yaml 
