@@ -44,7 +44,6 @@ def main(args):
 
 
 if __name__ == "__main__":
-    api_token = os.getenv("HUD_API_TOKEN")
     parser = argparse.ArgumentParser(description='Downloads HUD zipcode-county crosswalk for given year and quarter')
     parser.add_argument('--api_token', type=str, default=api_token, help='API token for HUD API')
     parser.add_argument('--year', type=int, default=2020, help='Year to be used for data downloading')
