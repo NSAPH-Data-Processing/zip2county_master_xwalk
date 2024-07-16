@@ -13,7 +13,7 @@ print("year list: ")
 print(year_list)
 
 api_token = os.getenv("HUD_API_TOKEN")
-print("api token" + api_token)
+print("api token " + api_token)
 
 rule all:
     input:
