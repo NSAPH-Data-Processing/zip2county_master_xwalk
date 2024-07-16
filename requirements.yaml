@@ -1,4 +1,4 @@
-name: zip_fips_master_xwalk
+name: zip2county_master_xwalk
 channels:
   - conda-forge
   - defaults
