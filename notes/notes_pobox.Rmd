@@ -12,18 +12,18 @@ library(ggplot2)
 
 ## R Markdown
 
-This R markdown script explores the way HUD crosswalks deal with PO boxes in their ZIP --> FIPS crosswalks. In order to do this, we'll use the intermediate-stage UDS crosswalk files in NSAPH's ZIP --> ZCTA pipeline. This file, `data/intermediate/uds_clean_xwalk/uds_clean_xwalk.csv`, can be produced using the pipeline found at [this GitHub repo](https://github.com/NSAPH-Data-Processing/zip2fips_master_xwalk/tree/main). 
+This R markdown script explores the way HUD crosswalks deal with PO boxes in their ZIP --> FIPS crosswalks. In order to do this, we'll use the intermediate-stage UDS crosswalk files in NSAPH's ZIP --> ZCTA pipeline. This file, `data/intermediate/uds_clean_xwalk/uds_clean_xwalk.csv`, can be produced using the pipeline found at [this GitHub repo](https://github.com/NSAPH-Data-Processing/zip2fips_master_xwalk/tree/main). Place this file in the `data` folder to reproduce the analysis below.
 
 ```{r}
 # loading UDS crosswalk
-uds_xwalk <- read.csv("/Users/jck019/Desktop/nsaph/data_team/zip2zcta_master_xwalk/data/intermediate/uds_clean_xwalk/uds_clean_xwalk.csv", sep=";",
+uds_xwalk <- read.csv("../data/uds_clean_xwalk.csv", sep=";",
                       colClasses = c("zip" = "character", "zcta"="character")) %>%
   filter(year > 2009)
 
 uds_xwalk$info[uds_xwalk$info == ""] <- NA
 
 # loading zip --> fips crosswalk
-hud_xwalk <- read.csv("/Users/jck019/Desktop/nsaph/data_team/zip-fips-crosswalk/data/output/zip2fips_master_xwalk_2010_2023.csv", 
+hud_xwalk <- read.csv("../data/output/zip2fips_master_xwalk_2010_2023.csv", 
                       colClasses = c("zip" = "character", 
                                      "fips" = "character"))[,-1] %>%
   filter(year <= 2021)
