@@ -1,5 +1,5 @@
 ---
-title: "zip2fips checks"
+title: "zip2county checks"
 date: "2024-06-13"
 ---
 
@@ -18,17 +18,17 @@ library(ggplot2)
 
 
 # load full data frame
-xwalk_full <- data.table::fread("../data/intermediate/zip2fips_xwalk_clean_2010_2023.csv", 
+xwalk_full <- data.table::fread("../data/intermediate/zip2county_xwalk_clean_2010_2023.csv", 
                                 colClasses = c(zip="character",
-                                               fips="character"))
+                                               county="character"))
 
 # perform basic matching with just Q4 data
-fips_matches_q4 <- xwalk_full %>% 
+county_matches_q4 <- xwalk_full %>% 
   filter(quarter == 4) %>%
   group_by(zip, year) %>%
   slice_max(tot_ratio) %>%  
   ungroup() %>%
-  group_by(zip, fips) %>%
+  group_by(zip, county) %>%
   summarize(min_year = min(year),
             max_year = max(year), 
             total_matches = n(),
@@ -37,11 +37,11 @@ fips_matches_q4 <- xwalk_full %>%
             tot_ratio_mean = mean(tot_ratio))
 
 # do matching with full dataset
-fips_matches_all <- xwalk_full %>%
+county_matches_all <- xwalk_full %>%
   group_by(zip, year) %>%
   slice_max(tot_ratio) %>%  
   ungroup() %>%
-  group_by(zip, fips) %>%
+  group_by(zip, county) %>%
   summarize(min_year = min(year),
             max_year = max(year), 
             total_matches = n(),
@@ -49,31 +49,31 @@ fips_matches_all <- xwalk_full %>%
             tot_ratio_max = max(tot_ratio),
             tot_ratio_mean = mean(tot_ratio))
 
-fips_matches_q4$match_str <- paste0(fips_matches_q4$zip, ",", fips_matches_q4$fips)
-fips_matches_all$match_str <- paste0(fips_matches_all$zip, ",", fips_matches_all$fips)
+county_matches_q4$match_str <- paste0(county_matches_q4$zip, ",", county_matches_q4$county)
+county_matches_all$match_str <- paste0(county_matches_all$zip, ",", county_matches_all$county)
 
-# what fraction of zip/fips matches are NOT in the q4 dataset?
-print(sum(!unique(fips_matches_all$match_str) %in% 
-      unique(fips_matches_q4$match_str))/length(unique(fips_matches_all$match_str)))
+# what fraction of zip/county matches are NOT in the q4 dataset?
+print(sum(!unique(county_matches_all$match_str) %in% 
+      unique(county_matches_q4$match_str))/length(unique(county_matches_all$match_str)))
 # raw number
-print(sum(!unique(fips_matches_all$match_str) %in% 
-      unique(fips_matches_q4$match_str)))
+print(sum(!unique(county_matches_all$match_str) %in% 
+      unique(county_matches_q4$match_str)))
 
 ```
 
-The above code chunk calculates the total number of total zip/fips matches that are in the quarterly crosswalks but not in the yearly-compiled crosswalks. There are just 0.09% missing! Only 38 out of nearly 40,000 unique zip codes.
+The above code chunk calculates the total number of total zip/county matches that are in the quarterly crosswalks but not in the yearly-compiled crosswalks. There are just 0.09% missing! Only 38 out of nearly 40,000 unique zip codes.
 
 
 We now run an analysis to tell if there is a noticeable change in criteria averages if we use Q4 vs the whole dataset. Note that these matches are not exactly the same as would be produced by the pipeline, but they are close enough for a quick comparison.
 ```{r}
 # now comparing criteria means between the two groups
-fips_matches_all_mg <- fips_matches_all %>%
-  merge(fips_matches_q4 %>% select(zip, fips, tot_ratio_mean),
-        by=c("zip", "fips"),
+county_matches_all_mg <- county_matches_all %>%
+  merge(county_matches_q4 %>% select(zip, county, tot_ratio_mean),
+        by=c("zip", "county"),
         suffixes=c(".all", ".q4")) %>%
   mutate(criteria_diff = tot_ratio_mean.all - tot_ratio_mean.q4)
 
-ggplot(fips_matches_all_mg, aes(x=criteria_diff)) +
+ggplot(county_matches_all_mg, aes(x=criteria_diff)) +
   geom_histogram(bins=50) +
   xlab("Difference in criteria") +
   ylab("Count") +
@@ -82,9 +82,9 @@ ggplot(fips_matches_all_mg, aes(x=criteria_diff)) +
   
 
 # summary statistics
-print(paste0("Mean difference: ", mean(fips_matches_all_mg$criteria_diff)))
-print(paste0("SD difference: ", sd(fips_matches_all_mg$criteria_diff)))
-print(quantile(fips_matches_all_mg$criteria_diff, c(0.025, 0.5, 0.975)) %>% round(5))
+print(paste0("Mean difference: ", mean(county_matches_all_mg$criteria_diff)))
+print(paste0("SD difference: ", sd(county_matches_all_mg$criteria_diff)))
+print(quantile(county_matches_all_mg$criteria_diff, c(0.025, 0.5, 0.975)) %>% round(5))
 ```
 
 
