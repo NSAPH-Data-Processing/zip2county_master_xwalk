@@ -35,7 +35,7 @@ def download_xwalk(year, quarter, api_token, outfile):
             df.to_csv(out_pth, index=False)
 
 def main(args):
-    outfile="data/input/zip2fips_raw_download_{year}Q{quarter}.csv"
+    outfile="data/input/zip2county_raw_download_{year}Q{quarter}.csv"
 
     download_xwalk(year=args.year, 
                     quarter=args.quarter, 

@@ -1,11 +1,11 @@
 import pandas as pd
 import argparse
 
-NAME_MAPPER = {"geoid": "fips",
-              "county": "fips"}
+NAME_MAPPER = {"geoid": "county",
+              "county": "county"}
 DTYPE_DICT = {
     "zip" : int,
-    "fips": int,
+    "county": int,
     "res_ratio": float,
     "bus_ratio": float,
     "oth_ratio": float,
@@ -20,16 +20,16 @@ def clean_xwalk(year, quarter, infile):
     # column re-naming and setting new types
     df.rename(columns=str.lower, inplace=True)
     df.rename(columns=NAME_MAPPER, inplace=True)
-    df = df.dropna(subset=["zip", "fips"])
+    df = df.dropna(subset=["zip", "county"])
     df = df.astype(DTYPE_DICT)
 
     # adding leading zeroes
-    df["fips"] = df["fips"].astype(str).str.zfill(5)
+    df["county"] = df["county"].astype(str).str.zfill(5)
     df["zip"] = df["zip"].astype(str).str.zfill(5)
     df["year"] = year
     df["quarter"] = quarter
 
-    return(df[["zip", "fips", "res_ratio", 
+    return(df[["zip", "county", "res_ratio", 
               "bus_ratio", "oth_ratio", 
               "tot_ratio", "year", "quarter"]])
 
@@ -38,8 +38,8 @@ def main(args):
     min_year = args.min_year
     max_year = args.max_year
 
-    infile = "data/input/zip2fips_raw_download_{year}Q{quarter}.csv"
-    outfile = f"data/intermediate/zip2fips_xwalk_clean_{min_year}_{max_year}.csv"
+    infile = "data/input/zip2county_raw_download_{year}Q{quarter}.csv"
+    outfile = f"data/intermediate/zip2county_xwalk_clean_{min_year}_{max_year}.csv"
 
     year_range = range(min_year, max_year+1)
     xwalk_lst = []
