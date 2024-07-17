@@ -5,7 +5,7 @@ date: "2024-07-10"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,warning = FALSE, message = FALSE, root.dir = '/Users/jck019/Desktop/nsaph/data_team/zip-fips-crosswalk')
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE, message = FALSE)
 library(dplyr)
 library(ggplot2)
 ```
@@ -21,22 +21,24 @@ uds_xwalk <- read.csv("../data/uds_clean_xwalk.csv", sep=";",
   filter(year > 2009)
 
 uds_xwalk$info[uds_xwalk$info == ""] <- NA
+```
 
+```{r}
 # loading zip --> fips crosswalk
-hud_xwalk <- read.csv("../data/output/zip2fips_master_xwalk_2010_2023.csv", 
+hud_xwalk <- read.csv("../data/output/zip2county_master_xwalk_2010_2023_tot_ratio_one2one.csv", 
                       colClasses = c("zip" = "character", 
-                                     "fips" = "character"))[,-1] %>%
+                                     "county" = "character")) %>%
   filter(year <= 2021)
+```
 
-
-
+```{r}
 # merging the two data frames
 hud_uds_mg <- uds_xwalk %>% select(-info) %>%
   merge(hud_xwalk, by=c("zip", "year"),all=T) %>%
-  mutate(missing_fips = is.na(fips))
+  mutate(missing_fips = is.na(county))
 
 # zips that are unmatched in fips df
-miss_fips <- hud_uds_mg %>% filter(is.na(fips))
+miss_fips <- hud_uds_mg %>% filter(is.na(county))
 
 ggplot(miss_fips, aes(x=as.factor(is_post_office), fill=is_post_office)) +
   geom_bar(stat="count")+
