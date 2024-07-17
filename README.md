@@ -18,6 +18,11 @@ You need to have an API token for the HUD database in order to use the pipeline.
 ```
 export HUD_API_TOKEN="your-token-here"
 ```
+**Link entrypoints to data placeholders** Add symlinks to input, intermediate and output folders inside the corresponding `/data` subfolders by running:
+
+```bash
+python utils/create_data_paths.py datapaths=cannon_datapaths
+```
 
 `snakemake` is the preferred way to run the pipeline. To run the pipeline with default parameters, simply run:
 ```

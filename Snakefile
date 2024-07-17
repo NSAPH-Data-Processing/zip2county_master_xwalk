@@ -17,7 +17,7 @@ print("api token " + api_token)
 
 rule all:
     input:
-        f"data/output/zip2county_master_xwalk_{min_year}_{max_year}_{criteria}_{xwalk_method}.csv"
+        f"data/output/zip2county_master_xwalk/zip2county_master_xwalk_{min_year}_{max_year}_{criteria}_{xwalk_method}.csv"
 
 rule download_hud_xwalks:
     output:
@@ -42,7 +42,7 @@ rule master_xwalk:
     input:
         f"data/intermediate/zip2county_xwalk_clean_{min_year}_{max_year}.csv"
     output:
-        f"data/output/zip2county_master_xwalk_{min_year}_{max_year}_{criteria}_{xwalk_method}.csv"
+        f"data/output/zip2county_master_xwalk/zip2county_master_xwalk_{min_year}_{max_year}_{criteria}_{xwalk_method}.csv"
     shell:
         f"""
         python src/master_xwalk.py --min_year {min_year} --max_year {max_year} \
