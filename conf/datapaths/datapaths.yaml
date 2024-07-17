@@ -1,0 +1,4 @@
+# if files are stored in the local repository, then use null:
+
+output:
+  zip2county_master_xwalk: null
