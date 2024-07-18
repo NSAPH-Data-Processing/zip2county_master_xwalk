@@ -18,6 +18,11 @@ You need to have an API token for the HUD database in order to use the pipeline.
 ```
 export HUD_API_TOKEN="your-token-here"
 ```
+**Link entrypoints to data placeholders** Add symlinks to input, intermediate and output folders inside the corresponding `/data` subfolders by running:
+
+```bash
+python utils/create_data_paths.py datapaths=cannon_datapaths
+```
 
 `snakemake` is the preferred way to run the pipeline. To run the pipeline with default parameters, simply run:
 ```
@@ -34,7 +39,7 @@ snakemake --cores 1 -C min_year={min_year} max_year={max_year} criteria={criteri
 Create the folder where you would like to store the output dataset.
 
 ```bash 
-mkdir <path>/zip2county_master_xwalk/
+mkdir <output_path>
 ```
 
 Create your own docker image
@@ -42,20 +47,21 @@ Create your own docker image
 docker build -t <image_name> .
 ```
 
-Then run the docker container
+A multi-platform built image is available under `zip2county_master_xwalk/census_series:latest`. To run the docker container do
+
 ```bash
-docker run -v <path>/zip2county_master_xwalk/:/app/data/output --env HUD_API_TOKEN=$HUD_API_TOKEN <image_name>
+docker run -v <output_path>/:/app/data/output --env HUD_API_TOKEN=$HUD_API_TOKEN <image_name>
 ```
 
 If you are also interested in storing the raw and intermediate data run
 
 ```bash
-docker run -v <path>/zip2county_master_xwalk/:/app/data/ --env HUD_API_TOKEN=$HUD_API_TOKEN <image_name>
+docker run -v <output_path:/app/data/ --env HUD_API_TOKEN=$HUD_API_TOKEN <image_name>
 ```
 
 And modifications to default arguments can also be made as follows:
 ```bash
-docker run -v <path>/zip2county_master_xwalk/:/app/data/ --env HUD_API_TOKEN=$HUD_API_TOKEN <image_name> -C min_year={min_year} max_year={max_year}
+docker run -v <output_path>:/app/data/ --env HUD_API_TOKEN=$HUD_API_TOKEN <image_name> -C min_year={min_year} max_year={max_year}
 ```
 
 Output crosswalks for default parameters and several different `xwalk_method` parameters can be found on the Harvard Dataverse [https://doi.org/10.7910/DVN/0U2TCB](https://doi.org/10.7910/DVN/0U2TCB). To cite with Bibtex use:

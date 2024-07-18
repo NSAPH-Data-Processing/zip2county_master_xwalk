@@ -90,7 +90,7 @@ def main(args):
 
     # input/output file setup
     infile = f"data/intermediate/zip2county_xwalk_clean_{min_year}_{max_year}.csv"
-    outfile = f"data/output/zip2county_master_xwalk_{min_year}_{max_year}_{criteria}_{xwalk_method}.csv"
+    outfile = f"data/output/zip2county_master_xwalk/zip2county_master_xwalk_{min_year}_{max_year}_{criteria}_{xwalk_method}.csv"
 
     # read df
     df = pd.read_csv(infile, dtype=DTYPE_DICT)
