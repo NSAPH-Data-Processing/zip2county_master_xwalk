@@ -6,11 +6,13 @@ RUN apt-get update && apt-get install -y build-essential
 # set working directory
 WORKDIR /app
 
-# Clone your repository
-RUN git clone https://github.com/NSAPH-Data-Processing/zip2county_master_xwalk/ .
+# Clone your repository at a specific tag
+RUN git clone --branch v1 --depth 1 https://github.com/NSAPH-Data-Processing/zip2county_master_xwalk/ .
 
 # Update the base environment
 RUN mamba env update -n base -f requirements.yaml 
+
+RUN python utils/create_data_paths.py
 
 # snakemake --configfile config.yaml --cores 1
 ENTRYPOINT ["snakemake", "--configfile", "config.yaml", "--cores", "1"]
