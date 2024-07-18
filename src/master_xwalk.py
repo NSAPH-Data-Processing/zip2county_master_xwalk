@@ -5,7 +5,7 @@ import argparse
 CRITERIA_LST = ["tot_ratio", "res_ratio", "bus_ratio", "oth_ratio"]
 DTYPE_DICT = {
     "zip" : str,
-    "fips": str,
+    "county": str,
     "res_ratio": float,
     "bus_ratio": float,
     "oth_ratio": float,
@@ -18,10 +18,10 @@ DTYPE_DICT = {
 
 # Returns one-to-one matches
 def make_one2one(df, criteria):
-    print("Starting zip-fips matching...")
+    print("Starting zip-county matching...")
     # one match per zip per year according to criteria
     idxs = df.groupby(["zip", "year"])[criteria].idxmax()
-    df_match = df.loc[idxs, ["zip", "fips", "year", criteria]]
+    df_match = df.loc[idxs, ["zip", "county", "year", criteria]]
 
     return df_match
 
@@ -29,10 +29,10 @@ def make_one2one(df, criteria):
 def make_one2one_summy(df, criteria):
     df_match = make_one2one(df, criteria)
     # keeping track of "breaks" in best matches
-    df_match['group'] = (df_match['year'] - df_match.groupby(['zip', 'fips']).cumcount()).astype(str)
+    df_match['group'] = (df_match['year'] - df_match.groupby(['zip', 'county']).cumcount()).astype(str)
 
     # return aggregated df with summy statistics
-    df_agg = df_match.groupby(['zip', 'fips', 'group']).agg(
+    df_agg = df_match.groupby(['zip', 'county', 'group']).agg(
         **{
         "min_year": ('year', 'min'),
         "max_year": ('year', 'max'),
@@ -46,12 +46,12 @@ def make_one2one_summy(df, criteria):
 
     return(df_agg)
 
-# Returns weighted zip2fips matches
+# Returns weighted zip2county matches
 def make_one2few(df, criteria, cutoff=0.05):
     idxs = df.groupby(["zip", "year"])[criteria].idxmax()
     df['top_match'] = df.index.isin(idxs)
     df = df.loc[(df[criteria] > cutoff)]
-    return(df[["zip", "fips", "year", criteria, 'top_match']])
+    return(df[["zip", "county", "year", criteria, 'top_match']])
 
 
 # Returns summaries of weighted one2few matches
@@ -64,8 +64,8 @@ def make_one2few_summy(df, criteria, cutoff = 0.05):
 
     # identify consecutive years, return aggregated
     df['group'] = (df['year'] - 
-                    df.groupby(['zip', 'fips', "exact_match", 'top_match']).cumcount()).astype(str)
-    df_agg = df.groupby(['zip', 'fips', 'group', 'top_match']).agg(
+                    df.groupby(['zip', 'county', "exact_match", 'top_match']).cumcount()).astype(str)
+    df_agg = df.groupby(['zip', 'county', 'group', 'top_match']).agg(
                 **{'min_year':('year', 'min'),
                     'max_year':('year', 'max'),
                     'total_matches':('year', 'count'),
@@ -89,8 +89,8 @@ def main(args):
     quarter = args.quarter
 
     # input/output file setup
-    infile = f"data/intermediate/zip2fips_xwalk_clean_{min_year}_{max_year}.csv"
-    outfile = f"data/output/zip2fips_master_xwalk_{min_year}_{max_year}_{criteria}_{xwalk_method}.csv"
+    infile = f"data/intermediate/zip2county_xwalk_clean_{min_year}_{max_year}.csv"
+    outfile = f"data/output/zip2county_master_xwalk_{min_year}_{max_year}_{criteria}_{xwalk_method}.csv"
 
     # read df
     df = pd.read_csv(infile, dtype=DTYPE_DICT)
@@ -137,6 +137,6 @@ if __name__ == "__main__":
                         default="one2one",
                         type=str, 
                         help='Method to make crosswalk')
-    parser.add_argument('--cutoff', type=float, default=0, help='Cutoff to include fips codes in one2few output')
+    parser.add_argument('--cutoff', type=float, default=0, help='Cutoff to include county codes in one2few output')
     args = parser.parse_args()
     main(args)

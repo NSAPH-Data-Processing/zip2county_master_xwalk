@@ -13,15 +13,15 @@ print("year list: ")
 print(year_list)
 
 api_token = os.getenv("HUD_API_TOKEN")
-print("api token" + api_token)
+print("api token " + api_token)
 
 rule all:
     input:
-        f"data/output/zip2fips_master_xwalk_{min_year}_{max_year}_{criteria}_{xwalk_method}.csv"
+        f"data/output/zip2county_master_xwalk_{min_year}_{max_year}_{criteria}_{xwalk_method}.csv"
 
 rule download_hud_xwalks:
     output:
-        f"data/input/zip2fips_raw_download_{{year}}Q{{quarter}}.csv" # year and quarter are wildcards
+        f"data/input/zip2county_raw_download_{{year}}Q{{quarter}}.csv" # year and quarter are wildcards
     shell:
         f"""
         python src/download_hud_xwalk.py --api_token {api_token} --year {{wildcards.year}} --quarter {{wildcards.quarter}}
@@ -29,20 +29,20 @@ rule download_hud_xwalks:
 
 rule create_clean_hud_xwalks:
     input:
-        expand(f"data/input/zip2fips_raw_download_{{year}}Q{{quarter}}.csv", 
+        expand(f"data/input/zip2county_raw_download_{{year}}Q{{quarter}}.csv", 
         year=year_list, # year is a wildcard
         quarter=list(range(1,4+1)) # quarter is a wildcard
         )
     output:
-        f"data/intermediate/zip2fips_xwalk_clean_{min_year}_{max_year}.csv"
+        f"data/intermediate/zip2county_xwalk_clean_{min_year}_{max_year}.csv"
     shell:
         f"python src/clean_hud_xwalk.py --min_year {min_year} --max_year {max_year}"
 
 rule master_xwalk:
     input:
-        f"data/intermediate/zip2fips_xwalk_clean_{min_year}_{max_year}.csv"
+        f"data/intermediate/zip2county_xwalk_clean_{min_year}_{max_year}.csv"
     output:
-        f"data/output/zip2fips_master_xwalk_{min_year}_{max_year}_{criteria}_{xwalk_method}.csv"
+        f"data/output/zip2county_master_xwalk_{min_year}_{max_year}_{criteria}_{xwalk_method}.csv"
     shell:
         f"""
         python src/master_xwalk.py --min_year {min_year} --max_year {max_year} \
