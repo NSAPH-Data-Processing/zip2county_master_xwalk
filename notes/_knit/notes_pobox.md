@@ -23,7 +23,7 @@ uds_xwalk$info[uds_xwalk$info == ""] <- NA
 
 ```r
 # loading zip --> fips crosswalk
-hud_xwalk <- read.csv("../data/output/zip2county_master_xwalk_2010_2023_tot_ratio_one2one.csv", 
+hud_xwalk <- read.csv("../data/output/zip2county_master_xwalk/zip2county_master_xwalk_2010_2023_tot_ratio_one2one.csv", 
                       colClasses = c("zip" = "character", 
                                      "county" = "character")) %>%
   filter(year <= 2021)
@@ -48,7 +48,7 @@ ggplot(miss_fips, aes(x=as.factor(is_post_office), fill=is_post_office)) +
   ggtitle("Missing ZIPs by P.O. Box Status")
 ```
 
-![](./notes_pobox_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
+![](./notes_pobox_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
 ```r
 print((sum(miss_fips$is_post_office =="True")/nrow(miss_fips)) %>% round(digits=3))
@@ -68,13 +68,38 @@ We also confirm that the total number of ZIP codes, as well as the proportion of
 ggplot(hud_uds_mg %>% filter(!is.na(zcta)), aes(x=as.factor(year), fill=is_post_office)) +
   geom_bar(stat="count") +
   xlab("Year") +
-  ylab("Count missing") +
+  ylab("Count") +
   scale_fill_discrete(name="ZIP Code Type", 
                       labels=c("False" = "Normal ZIP", "True" = "P.O. Box")) +
   ggtitle("Prevalence of P.O. Boxes in UDS Dataset")
 ```
 
-![](./notes_pobox_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
+![](./notes_pobox_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+
+We then break down the type of the zip codes that are unmatched to a county after the crosswalk-building process.
+
+```r
+ggplot(miss_fips, aes(x=as.factor(is_post_office), fill=is_post_office)) +
+  geom_bar(stat="count")+
+  scale_x_discrete(labels=c("False" = "Normal ZIP", "True" = "P.O. Box")) +
+  xlab("ZIP Code Type") +
+  ylab("Count missing") +
+  guides(fill="none") +
+  ggtitle("Missing ZIPs by P.O. Box Status")
+```
+
+![](./notes_pobox_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
+```r
+print((sum(miss_fips$is_post_office =="True")/nrow(miss_fips)) %>% round(digits=3))
+```
+
+```
+## [1] 0.867
+```
+
+As shown in the plot above, the vast majority of ZIP codes that are unmatched to a FIPS code in the HUD crosswalks are P.O. boxes.
 
 
 We'll now examine the distribution of missingness across years, and how this relates to P.O. box status.
@@ -90,7 +115,7 @@ ggplot(miss_fips, aes(x=as.factor(year), fill=is_post_office)) +
   ggtitle("Distribution of unmatched ZIPs across years")
 ```
 
-![](./notes_pobox_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
+![](./notes_pobox_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
 We observe a larger number of unmatched ZIPs from 2010-2013, driven in part by a larger number of unmatched "normal" ZIP codes (i.e. ZIP codes that are not P.O. boxes).
 
@@ -101,14 +126,14 @@ The increase in missingness from 2010-2013 raises some eyebrows, but as shown in
 ggplot(hud_uds_mg %>% filter(!is.na(zcta)), aes(x=as.factor(year), fill=missing_fips)) +
   geom_bar(stat="count", color="black") +
   xlab("Year") +
-  ylab("Count missing") +
+  ylab("Count") +
   scale_fill_manual(name="Matched to FIPS", 
                       labels=c("FALSE" = "Yes", "TRUE" = "No"),
                     values=c("blue", "red")) +
   ggtitle("Number of unmatched ZIP codes across years")
 ```
 
-![](./notes_pobox_files/figure-html/unnamed-chunk-17-1.png)<!-- -->
+![](./notes_pobox_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
 ```r
 print((sum(hud_uds_mg$missing_fips)/nrow(hud_uds_mg)) %>% round(4))
