@@ -18,11 +18,14 @@ You need to have an API token for the HUD database in order to use the pipeline.
 ```
 export HUD_API_TOKEN="your-token-here"
 ```
+
 **Link entrypoints to data placeholders** Add symlinks to input, intermediate and output folders inside the corresponding `/data` subfolders by running:
 
 ```bash
-python utils/create_data_paths.py datapaths=cannon_datapaths
+python utils/create_data_paths.py 
 ```
+
+> For nsaph users `python utils/create_data_paths.py datapaths=cannon_datapaths`
 
 `snakemake` is the preferred way to run the pipeline. To run the pipeline with default parameters, simply run:
 ```
@@ -42,12 +45,7 @@ Create the folder where you would like to store the output dataset.
 mkdir <output_path>
 ```
 
-Create your own docker image
-```bash
-docker build -t <image_name> .
-```
-
-A multi-platform built image is available under `zip2county_master_xwalk/census_series:latest`. To run the docker container do
+A multi-platform built image is available under `nsaph/zip2county_master_xwalk:latest`. To run the docker container do
 
 ```bash
 docker run -v <output_path>/:/app/data/output --env HUD_API_TOKEN=$HUD_API_TOKEN <image_name>
@@ -60,9 +58,24 @@ docker run -v <output_path:/app/data/ --env HUD_API_TOKEN=$HUD_API_TOKEN <image_
 ```
 
 And modifications to default arguments can also be made as follows:
+
 ```bash
 docker run -v <output_path>:/app/data/ --env HUD_API_TOKEN=$HUD_API_TOKEN <image_name> -C min_year={min_year} max_year={max_year}
 ```
+
+**Building the image**
+
+To create your own docker image
+```bash
+docker build -t <image_name> .
+```
+
+For a multiarch built do
+```bash
+docker buildx build --platform linux/amd64,linux/arm64 -t nsaph/zip2county_master_xwalk:latest . --push
+```
+
+## Public data 
 
 Output crosswalks for default parameters and several different `xwalk_method` parameters can be found on the Harvard Dataverse [https://doi.org/10.7910/DVN/0U2TCB](https://doi.org/10.7910/DVN/0U2TCB). To cite with Bibtex use:
 ```
