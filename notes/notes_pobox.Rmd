@@ -25,7 +25,7 @@ uds_xwalk$info[uds_xwalk$info == ""] <- NA
 
 ```{r}
 # loading zip --> fips crosswalk
-hud_xwalk <- read.csv("../data/output/zip2county_master_xwalk_2010_2023_tot_ratio_one2one.csv", 
+hud_xwalk <- read.csv("../data/output/zip2county_master_xwalk/zip2county_master_xwalk_2010_2023_tot_ratio_one2one.csv", 
                       colClasses = c("zip" = "character", 
                                      "county" = "character")) %>%
   filter(year <= 2021)
