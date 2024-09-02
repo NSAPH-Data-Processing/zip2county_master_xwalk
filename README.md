@@ -4,6 +4,8 @@
 
 This pipeline pulls crosswalks from the U.S. Department of Housing and Urban Development (HUD) database, compiling a comprehensive ZIP code to county crosswalk from 2010 to 2023.
 
+ZIP Codes are updated on a regular basis. [Here is an example announcement from the USPS](https://about.usps.com/postal-bulletin/2014/pb22390/html/info_002.htm).
+
 In order to run the pipeline, build a conda environment with the following command.
 
 ```
